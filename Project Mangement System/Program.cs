@@ -1,7 +1,10 @@
 
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Project_Mangement_System.Commons;
 using Project_Mangement_System.Data;
 using Project_Mangement_System.Features.ProjectManagement.Projects;
+using Project_Mangement_System.Features.ProjectManagement.Projects.AddProject;
 using Project_Mangement_System.MiddleWares;
 using System.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
@@ -31,11 +34,14 @@ namespace Project_Mangement_System
             builder.Services.AddSwaggerGen();
             //Add Auto Mapper
             builder.Services.AddAutoMapper(typeof(Program));
-          
+            builder.Services.AddValidatorsFromAssemblyContaining<AddProjectRequestViewModelValidator>();
+
+
             //Add Mediator
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
             //General Repos
             builder.Services.AddScoped(typeof(IProjectRepository<>), typeof(ProjectRepository<>));
+            builder.Services.AddScoped(typeof(BaseEndPointParameters<>));
             //CAP Library
             builder.Services.AddCap(cfg =>
             {

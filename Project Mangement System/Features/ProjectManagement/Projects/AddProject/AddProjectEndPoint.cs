@@ -1,47 +1,48 @@
 ﻿using Azure.Core;
+using DotNetCore.CAP;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Project_Mangement_System.Commons;
 using Project_Mangement_System.Commons.Data;
 using Project_Mangement_System.Commons.Views;
+using Project_Mangement_System.Features.ProjectManagement.Projects.AddProject.Commands;
 
 namespace Project_Mangement_System.Features.ProjectManagement.Projects.AddProject
 {
 
-
    
-    public class AddProjectEndPoint: BaseEndPoint<AddProjectRequestViewModel,AddProjectResponseViewModel>
+    public class AddProjectEndPoint : BaseEndPoint<AddProjectRequestViewModel, AddProjectResponseViewModel>
     {
-       
         private readonly BaseEndPointParameters<AddProjectRequestViewModel> _parameters;
-
         public AddProjectEndPoint(BaseEndPointParameters<AddProjectRequestViewModel> parameters)
-        :base(parameters){
-           
+            : base(parameters) {
             _parameters = parameters;
         }
 
-        [HttpPost]
-        public EndPointResponse<AddProjectResponseViewModel> AddProject(AddProjectRequestViewModel viewModel)
-        {
-            var ValidationResult = ValidateRequest(viewModel);
-            if (!ValidationResult.IsSuccess) {
-                return ValidationResult;
-            }
+      
 
-        
+        [HttpPost]
+        public async Task<EndPointResponse<AddProjectResponseViewModel>> AddProject( AddProjectRequestViewModel viewModel)
+        {
+            var validation = ValidateRequest(viewModel);
+            if (!validation.IsSuccess)
+                return validation;
+
             return EndPointResponse<AddProjectResponseViewModel>.Success(default);
 
+
+            //var command = new AddProjectCommand(viewModel);
+            //return await SendRequestAsync(command);
         }
 
-        [HttpPost]
-        public void PublishMessage()
+        [HttpPost("publish")]
+        public async Task<IActionResult> PublishTestMessage()
         {
-            _parameters.CapPublisher.Publish("cap test", new { Id = 111 , Name = "ali" });
-           
+            // _Parameters.CapPublisher.Publish("cap.test", new { Id = 123, Name = "Project" });
+            await PublishMessageAsync("capTest", new { Id = 123, Name = "Project" });
+            return Ok("Message published.");
         }
-        
-        
     }
+
 }

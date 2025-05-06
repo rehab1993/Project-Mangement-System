@@ -7,6 +7,8 @@ namespace Project_Mangement_System.Commons
     {
         protected IMediator _mediator;
         protected ICapPublisher _capPublisher;
+        protected ILogger _logger;
+      
         public BaseRequestHandler(BaseRequestHandlerParameters parameters) {
             _mediator = parameters.Mediator;
             _capPublisher = parameters.CapPublisher;
